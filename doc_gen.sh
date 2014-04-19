@@ -10,7 +10,7 @@ fname="temp"
 
 g++ doc_sort.cpp -o doc_sort.out  #Sorts a given file in dictionary style.
 mkdir temp #Create a Temp Directory to store the sorted documents 
-echo "temp folder is created,Indexing is started"
+echo "temp folder is created,Sorting each file is about to get started"
 
 while [ 2 -eq 2 ]   # Always true with a break condition inside
 	do 
@@ -20,6 +20,8 @@ while [ 2 -eq 2 ]   # Always true with a break condition inside
 		fname=$(ls ./docs | head -n $remaining | tail -n 1  )
 		count=count+1
 		remaining=remaining-1
-		echo "Indexed: $fname"
+		echo "Sorted: $fname to $remaining.txt"
 		./doc_sort.out < ./docs/$fname > ./temp/"$remaining.txt"  #The Awesomely Written CPP Program :)
 	done
+
+echo "Finished Sorting every file"
