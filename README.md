@@ -10,5 +10,11 @@ Implementation Details:<br>
 -> Score is as follows:  log(1+tf) * log(n/dft) <br>
 	where tf is the term frequency<br>
 	dft is the term document frequency <br>
--> When a Phrase is queried, An Approach similar to N pointer Merge is used to calcuate score w.r.t to each document.<br> 
+-> When a Phrase is queried, An Approach similar to N pointer Merge is used to calcuate score w.r.t to each document.<br>
 
+
+Code Explained: <br>
+-> hash.h is the header file for the hash table <br>
+-> doc_gen.sh is the script file written to generate sorted ( in a new folder called temp) <br>
+-> doc_sort.cpp is the actual file which sorts each file one by one <br>
+	( which is used in doc_gen.sh) <br>
