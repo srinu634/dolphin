@@ -21,7 +21,8 @@ while [ 2 -eq 2 ]   # Always true with a break condition inside
 		count=count+1
 		remaining=remaining-1
 		echo "Sorted: $fname to $remaining.txt"
-		./doc_sort.out < ./docs/$fname > ./temp/"$remaining.txt"  #The Awesomely Written CPP Program :)
+		./doc_sort.out < ./docs/$fname > temp.txt 
+		sort temp.txt	> ./temp/"$remaining.txt"  #The Awesomely Written CPP Program :)
 	done
-
+rm temp.txt
 echo "Finished Sorting every file"

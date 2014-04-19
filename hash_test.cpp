@@ -1,3 +1,4 @@
+/*To Test hash.h*/
 #include<iostream>
 #include<algorithm>
 #include<cstring>
@@ -34,7 +35,7 @@ ll generate_hash(char * str){
 
     for(i=0;i<len;i++)
 
-        hashvalue =  ( hashvalue + ( 43 * (str[i] - '\0')  )%MAX )%MAX;
+        hashvalue =  ( hashvalue + ( 43 * (str[i] )  )%MAX )%MAX;
     return hashvalue;
 
 }
@@ -88,7 +89,7 @@ void print_list(struct node *temp){ //Print a row in a hash table recursively.  
         cout<<endl;
         return;
     }
-    cout<<temp->word<<" "<<temp->fre<<endl;
+    cout<<temp->word<<" "<<temp->fre<<" ";
     print_list(temp->next);
 }
 
@@ -101,4 +102,25 @@ void print_hashtable(){
         else
             print_list(h[i]);
     }
+}
+
+
+int main ()
+{
+
+	char str[10000];
+
+	initialise_hash();
+
+	while(true){
+		if( !(cin>>str) )
+			break;
+		cout<<str<<endl;
+		if(lookup(str) == false)
+			add(str);
+	}//while
+	
+	print_hashtable();
+	
+  return 0;
 }
