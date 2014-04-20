@@ -230,19 +230,18 @@ int main(int argc, char *argv[]){
 
                 sprintf(cmmnd,"cp ./docs/%s doctemp.out",tstr);
                 system(cmmnd);
-                strcpy(tstr,"grep ");
+                /*strcpy(tstr,"grep ");
 
                 for(i=0;i<fre_qw;i++){
                     strcat(tstr," -e ");
                     strcat(tstr,Q[i].qword);
-                    }
+                }*/
 
                 sprintf(cmmnd," cat doctemp.out");
                 system(cmmnd);
                 fclose(fp);
                 return 0;
-            }
-
+            }//child
         }//while
     }//Infinite While Loop
 
