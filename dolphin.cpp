@@ -10,7 +10,16 @@
 #include<cstring>
 #include<cstdio>
 
-double dot_prod[MAXDOCS];  //Length Normalised Dot Product
+struct doc_node{
+    double dot_prod;  // Normalised Dot Product
+    int doc_no;
+}D[MAXDOCS];
+
+
+struct query_node{
+    char *qword; // to store each word of the query
+    double score;
+} Q[100];
 
 void build_index(int n){ // n #of documents
 
@@ -29,7 +38,6 @@ void build_index(int n){ // n #of documents
                 add(str); //Global Hash Table
 
             add_inv(i,str,fre); //Inverted Index
-            len[i] += fre;
 
       /*      cout<<str<<" "<<fre<<endl;
               Uncomment this for better debugging
@@ -37,7 +45,7 @@ void build_index(int n){ // n #of documents
         }//while
         // cout<<"length is: "<<len[i]<<endl;
         fclose(fp);
-
+        len[i] = sqrt(len[i]);
     }//for
 
 }//build_index
@@ -70,7 +78,9 @@ void  calculate_scores(int n){
             res *= log(1+trav->fre);
             trav->score = res;
             trav = trav->next;
+            len[i] += res*res;
         }//while
+        len[i] = sqrt(len[i]);
     }//for
 
 }//scores
@@ -80,7 +90,6 @@ int main(){
 
     int i,i1,i2,j; //iterators
     int doc_count;
-    char *query[100]; // to store each word of the query
 
 
     initialise_hash();
@@ -92,10 +101,10 @@ int main(){
     calculate_scores(doc_count); //Update score for each term in every document
 
 
-//    print_tables(doc_count);
+    //print_tables(doc_count);
 
     for(i=0;i<100;i++)
-        query[i] = (char *)( malloc(sizeof(char) *200) );
+        Q[i].qword = (char *)( malloc(sizeof(char) *200) );
 
     while(true){         //ONLINE PROCESSING
         cout<<"Enter the phrase query: (End it with a ; )"<<endl;
@@ -103,26 +112,49 @@ int main(){
         fre_qw=0;
 
         while(true){
-            cin>>query[fre_qw];
-            if( strcmp(query[fre_qw],";") == 0)
+            cin>>Q[fre_qw].qword;
+            if( strcmp(Q[fre_qw].qword,";") == 0)
                 break;
             fre_qw++;
         }
 
+        cout<<"Tokenizing Phrase Query: "<<endl;
+
        for(i1=0;i1<fre_qw-1;i1++)
         for(i2=0;i2<fre_qw-1;i2++)
-            if( strcmp(query[i2],query[i2+1]) > 0 )
-                swap(query[i2],query[i2+1]);        //Bubble sort as query is supposedly small and does not exceed 10 words at max
+            if( strcmp(Q[i2].qword,Q[i2+1].qword) > 0 )
+                swap(Q[i2],Q[i2+1]);        //Bubble sort as query is supposedly small and does not exceed 10 words at max
                                                     // No Point in doing Quick/Merge for such a small input size
 
-       //for(i=0;i<fre_qw;i++)
-         //   cout<<query[i]<<endl;
+       for(i=0;i<fre_qw;i++)
+            cout<<Q[i].qword<<endl , Q[i].score = 2.33;  //To avoid Truncated Integer Values
+
+        cout<<"Done Tokenizing"<<endl;
 
         for(i1=0;i1<doc_count;i1++)
-            dot_prod[i1]=0;
+            D[i1].dot_prod=0 , D[i1].doc_no = i1;
+
+        double qlen;  //Normalised Query Vector
+        qlen = 0;
+
+        for(i=0;i<fre_qw;i++){
+            Q[i].score = doc_count;
+            Q[i].score /= get_fre( Q[i].qword );
+            Q[i].score = log( Q[i].score ) < 0 ? 0 : log( Q[i].score );
+            qlen += Q[i].score*Q[i].score;
+        }
+
+        qlen = sqrt(qlen);
+
+        /*cout<<qlen<<endl;
+
+         for(i=0;i<fre_qw;i++){
+            cout<<Q[i].qword<<" "<<Q[i].score<<endl;
+         }*/
 
 
-    }
+
+    }//Infinite While Loop
 
     return 0;
     }//main
