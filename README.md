@@ -21,6 +21,11 @@ Code Explained: <br>
 -> inverted_index.h contains all the functions required to build the inverted index for each file<br>
 -> dolphin.cpp is the file where Global Hash Tables are built, Inverted Indexes are built and Queries are Processed<br>
 
+How to run it?<br>
+-> Copy files in a folder called docs<br>
+-> run doc_gen.sh<br>
+-> run dolphin.coo<br>
+
 
 
 
