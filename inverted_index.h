@@ -1,19 +1,28 @@
-#include<iostream>
 #include<algorithm>
 #include<cstring>
+#include<cmath>
 #define MAXDOCS 2000
 using namespace std;
 
 struct inv_node{
     char *word;
     int fre;
+    double score;
     struct inv_node *next;
 };
 
 
 struct inv_node * inv_index[MAXDOCS];
 
-void add(int inv_val,char str[],int fre){
+void initialise_inv_index(){
+	int i;
+
+	for(i=0;i<MAXDOCS;i++)
+		inv_index[i] = NULL;
+}
+
+
+void add_inv(int inv_val,char str[],int fre){
 
     struct inv_node *temp;
 
@@ -35,6 +44,6 @@ void print_inv_list(struct inv_node *temp){ //Print a row in a hash table recurs
         cout<<endl;
         return;
     }
-    cout<<temp->word<<" "<<temp->fre<<" ";
+    cout<<temp->word<<","<<temp->fre<<","<<temp->score<<" ";
     print_inv_list(temp->next);
 }

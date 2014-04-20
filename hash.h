@@ -102,3 +102,21 @@ void print_hashtable(){
             print_list(h[i]);
     }
 }
+
+int get_fre(char *str){
+    int hashvalue;
+    struct node *trav;
+
+    hashvalue = generate_hash(str);
+
+    trav = h[hashvalue];
+
+    while(trav != NULL){
+        if( strcmp(str,trav->word) == 0)
+            return trav->fre;
+
+        trav = trav->next;
+    }
+
+    return 0;
+}
