@@ -4,7 +4,7 @@
 #	2nd document in ls is sorted as 1.txt .........
 # This is done so that the Indexing of term frequencies can be done in O(n) , where n is the document size*AVG(Word Length) . Of course, Sorting takes O(nlogn).
 
-declare -i count=0 #Number of documents to be indexed
+declare -i count=0 #Number of documents indexed
 declare -i remaining=8 
 fname="temp"
 
@@ -22,7 +22,8 @@ while [ 2 -eq 2 ]   # Always true with a break condition inside
 		remaining=remaining-1
 		echo "Sorted: $fname to $remaining.txt"
 		./doc_sort.out < ./docs/$fname > temp.txt 
-		sort temp.txt	> ./temp/"$remaining.txt"  #The Awesomely Written CPP Program :)
+		sort -r temp.txt	> ./temp/"$remaining.txt"  #The Awesomely Written CPP Program :)
+			
 	done
 rm temp.txt
 echo "Finished Sorting every file"

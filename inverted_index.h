@@ -13,12 +13,13 @@ struct inv_node{
 
 
 struct inv_node * inv_index[MAXDOCS];
+double len[MAXDOCS]; // For Length Normalisation
 
 void initialise_inv_index(){
 	int i;
 
 	for(i=0;i<MAXDOCS;i++)
-		inv_index[i] = NULL;
+		inv_index[i] = NULL , len[i] = 0;
 }
 
 

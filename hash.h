@@ -5,6 +5,7 @@ using namespace std;
 
 typedef long long ll;
 #define MAX 373373
+#define INF 100000000
 #define true 1
 #define false 0
 #define rep(i,n) for(i=0;i<n;i++)
@@ -85,7 +86,6 @@ void add(char * str){
 
 void print_list(struct node *temp){ //Print a row in a hash table recursively.  i.e a particular hash value
     if(temp == NULL){
-        cout<<endl;
         return;
     }
     cout<<temp->word<<" "<<temp->fre<<endl;
@@ -118,5 +118,5 @@ int get_fre(char *str){
         trav = trav->next;
     }
 
-    return 0;
+    return INF;
 }

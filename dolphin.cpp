@@ -85,6 +85,36 @@ void  calculate_scores(int n){
 
 }//scores
 
+double getDotProductValue(int n,int m){ // n -> Doc # , m -> #Words in Query
+                                        //Something very similar to merge
+    int i,j;
+    double res;
+    struct inv_node *trav;
+
+
+    trav = inv_index[n];
+    i = 0;
+    res = 0;
+
+    while( trav != NULL && i <= m) {
+        if( strcmp(trav->word,Q[i].qword) < 0 )
+            trav = trav->next;
+        else if( strcmp(trav->word,Q[i].qword) > 0 )
+            i++;
+        else {
+            res += trav->score*Q[i].score;
+            i++;
+            trav = trav->next;
+            }
+    }
+
+    return res;
+}
+
+bool cmpfun(struct doc_node a,struct doc_node b){
+
+    return a.dot_prod > b.dot_prod ;
+}
 
 int main(){
 
@@ -146,19 +176,30 @@ int main(){
 
         qlen = sqrt(qlen);
 
-        /*cout<<qlen<<endl;
+        if(qlen == 0 ){
+            cout<<"Query does not exist in our database"<<endl;
+            continue;
+        }
 
-         for(i=0;i<fre_qw;i++){
+      /*   for(i=0;i<fre_qw;i++){
             cout<<Q[i].qword<<" "<<Q[i].score<<endl;
          }*/
 
+         for(i=0;i<doc_count;i++)
+            D[i].dot_prod = getDotProductValue(i,fre_qw)/(len[i]*qlen); //Unit Vector
 
+        //sort and then retrieve the top 5 docs :)
+
+        sort(D,D+doc_count,cmpfun);
+
+        for(i=0;i<doc_count;i++)
+            cout<<D[i].doc_no<< " ";
+        cout<<endl;
 
     }//Infinite While Loop
 
     return 0;
     }//main
-
 
 
 //  NOTE:
