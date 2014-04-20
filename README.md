@@ -24,7 +24,7 @@ Code Explained: <br>
 How to run it?<br>
 -> Copy files in a folder called docs<br>
 -> run doc_gen.sh<br>
--> run dolphin.coo<br>
+-> run dolphin.cpp<br>
 
 
 
