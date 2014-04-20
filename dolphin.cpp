@@ -7,6 +7,7 @@
 #include "hash.h"
 #include "inverted_index.h"
 #include<cmath>
+#include<unistd.h>
 #include<cstring>
 #include<cstdio>
 
@@ -116,7 +117,7 @@ bool cmpfun(struct doc_node a,struct doc_node b){
     return a.dot_prod > b.dot_prod ;
 }
 
-int main(){
+int main(int argc, char *argv[]){
 
     int i,i1,i2,j; //iterators
     int doc_count;
@@ -196,6 +197,53 @@ int main(){
             cout<<D[i].doc_no<< " ";
         cout<<endl;
 
+
+        cout<<"Enter File# To open the File (-1 to exit): "<<endl;
+
+        while(true){
+            int fno;
+
+
+            cin>>fno;
+
+            if(fno == -1)
+                break;
+
+            if(fno < 0|| fno >= doc_count){
+                cout<<"Please Enter a valid file#: "<<"0 to "<<doc_count-1<<endl;
+                continue;
+            }
+
+            int pid;
+            char cmmnd[100];
+
+            sprintf(cmmnd,"ls -1 ./docs | head -n %d | tail -n 1  > qtemp.out",fno+1);
+
+            pid = fork();
+
+            if(pid == 0){ //Displaying the file, inner details are a bit messy :(
+                char tstr[1000];
+                FILE *fp;
+                fp = fopen("qtemp.out","r");
+
+                fscanf(fp,"%s",tstr);
+
+                sprintf(cmmnd,"cp ./docs/%s doctemp.out",tstr);
+                system(cmmnd);
+                strcpy(tstr,"grep ");
+
+                for(i=0;i<fre_qw;i++){
+                    strcat(tstr," -e ");
+                    strcat(tstr,Q[i].qword);
+                    }
+
+                sprintf(cmmnd," cat doctemp.out");
+                system(cmmnd);
+                fclose(fp);
+                return 0;
+            }
+
+        }//while
     }//Infinite While Loop
 
     return 0;
