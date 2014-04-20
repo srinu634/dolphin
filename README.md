@@ -18,3 +18,6 @@ Code Explained: <br>
 -> doc_gen.sh is the script file written to generate sorted ( in a new folder called temp) <br>
 -> doc_sort.cpp is the actual file which sorts each file one by one <br>
 	( which is used in doc_gen.sh) <br>
+-> inverted_index.h contains all the functions required to build the inverted index for each file<br>
+
+
