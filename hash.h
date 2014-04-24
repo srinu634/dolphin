@@ -35,8 +35,8 @@ ll generate_hash(char * str){
 
     for(i=0;i<len;i++)
 
-        hashvalue =  ( hashvalue + ( 43 * (str[i] - '\0')  )%MAX )%MAX;
-    return hashvalue;
+        hashvalue =  ( hashvalue + ( 43 * (str[i] )  )%MAX )%MAX;
+    return (hashvalue+MAX)%MAX;
 
 }
 

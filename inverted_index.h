@@ -45,6 +45,6 @@ void print_inv_list(struct inv_node *temp){ //Print a row in a hash table recurs
         cout<<endl;
         return;
     }
-    cout<<temp->word<<","<<temp->fre<<","<<temp->score<<" ";
+    cout<<temp->word<<","<<temp->fre<<"     ";
     print_inv_list(temp->next);
 }

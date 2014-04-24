@@ -10,6 +10,7 @@
 #include<unistd.h>
 #include<cstring>
 #include<cstdio>
+#include <ctime>
 
 struct doc_node{
     double dot_prod;  // Normalised Dot Product
@@ -25,30 +26,29 @@ struct query_node{
 void build_index(int n){ // n #of documents
 
     char fname[100];
-    char str[1000];
+    char str[1000000];
     int i,j,fre;
     FILE *fp;
 
     for(i=0;i<n;i++){
-
+        cout<<"Indexed Document "<<i<<endl;
         sprintf(fname,"./temp/%d.txt",i);
         fp = fopen(fname,"r");
 
         while( fscanf(fp,"%s %d",str,&fre) != EOF ){
+                    //cout<<str<<" "<<fre<<endl;
             if(lookup(str) == false)
                 add(str); //Global Hash Table
 
             add_inv(i,str,fre); //Inverted Index
 
-      /*      cout<<str<<" "<<fre<<endl;
-              Uncomment this for better debugging
-      */
+        //   cout<<str<<" "<<fre<<endl;
         }//while
-        // cout<<"length is: "<<len[i]<<endl;
+    //    print_inv_list(inv_index[i]);
         fclose(fp);
-        len[i] = sqrt(len[i]);
+        len[i] =0;
     }//for
-
+return;
 }//build_index
 
 void print_tables(int doc_count){
@@ -58,6 +58,7 @@ void print_tables(int doc_count){
     print_hashtable();
 
     cout<<"Inverted Index is: "<<endl;
+
     for(i=0;i<doc_count;i++)
         print_inv_list(inv_index[i]);
 }
@@ -70,16 +71,23 @@ void  calculate_scores(int n){
 
     for(i=0;i<n;i++){
         trav = inv_index[i];
-
+        cout<<"In Document: "<<i<<endl;
         while(trav != NULL){
+            double res1,res2;
             fre = get_fre(trav->word); //From the global hash table
-            res = n;
-            res /=fre;
-            res = log(res);
-            res *= log(1+trav->fre);
+           // cout<<trav->word<<"Total fre: "<<fre<<" ";
+
+            res1 = n/1.000;
+            res1 = res1/fre;
+            res1 = log(res1)/log(2);
+            //cout<<"Doc fre: "<<trav->fre;
+            res2 = log(1+trav->fre)/log(2);
+            res = res1 * res2;
+            //cout<<" res1: "<<res1<<" res2: "<<res2<<" res: "<<res<<endl;
             trav->score = res;
             trav = trav->next;
             len[i] += res*res;
+
         }//while
         len[i] = sqrt(len[i]);
     }//for
@@ -97,13 +105,20 @@ double getDotProductValue(int n,int m){ // n -> Doc # , m -> #Words in Query
     i = 0;
     res = 0;
 
+    //cout<<"In file "<<n<<endl;
+
     while( trav != NULL && i <= m) {
-        if( strcmp(trav->word,Q[i].qword) < 0 )
-            trav = trav->next;
-        else if( strcmp(trav->word,Q[i].qword) > 0 )
+        if( strcmp(trav->word,Q[i].qword) < 0 ){
+            //cout<<trav->word<<" "<<Q[i].qword<<endl;
+             trav = trav->next;
+            }
+        else if( strcmp(trav->word,Q[i].qword) > 0 ) {
+            //cout<<trav->word<<" "<<Q[i].qword<<endl;
             i++;
+            }
         else {
-            res += trav->score*Q[i].score;
+            //cout<<"MATCHING FOUND"<<endl;
+            res  = res + trav->score*Q[i].score;
             i++;
             trav = trav->next;
             }
@@ -128,11 +143,16 @@ int main(int argc, char *argv[]){
 
 
     doc_count = 8;
+    //int start_s=clock();
     build_index(doc_count);  //Global Hash Table + Inverted Index are built
+    //int stop_s=clock();
+    //cout << "time: " << (stop_s-start_s)/double(CLOCKS_PER_SEC)*1000 << endl;
+
+    cout<<"Calculating scores"<<endl;
     calculate_scores(doc_count); //Update score for each term in every document
 
 
-    //print_tables(doc_count);
+    print_tables(doc_count);
 
     for(i=0;i<100;i++)
         Q[i].qword = (char *)( malloc(sizeof(char) *200) );
@@ -158,7 +178,7 @@ int main(int argc, char *argv[]){
                                                     // No Point in doing Quick/Merge for such a small input size
 
        for(i=0;i<fre_qw;i++)
-            cout<<Q[i].qword<<endl , Q[i].score = 2.33;  //To avoid Truncated Integer Values
+            cout<<Q[i].qword<<endl;
 
         cout<<"Done Tokenizing"<<endl;
 
@@ -169,32 +189,36 @@ int main(int argc, char *argv[]){
         qlen = 0;
 
         for(i=0;i<fre_qw;i++){
-            Q[i].score = doc_count;
-            Q[i].score /= get_fre( Q[i].qword );
-            Q[i].score = log( Q[i].score ) < 0 ? 0 : log( Q[i].score );
+            Q[i].score = doc_count/1.0;
+            Q[i].score = Q[i].score / get_fre( Q[i].qword );
+
+            Q[i].score = log( Q[i].score ) <= 0 ? 0 : log( Q[i].score );
+            Q[i].score = Q[i].score/log(2);
+            cout<<"Global Score is: "<<get_fre(Q[i].qword)<<endl;;
             qlen += Q[i].score*Q[i].score;
         }
 
         qlen = sqrt(qlen);
 
         if(qlen == 0 ){
-            cout<<"Query does not exist in our database"<<endl;
+            cout<<"Query does not exist in our database | The word is too frequent (i.e a stop word may be )"<<endl;
             continue;
         }
+        cout<<"Score w.r.t each file"<<endl;
 
-      /*   for(i=0;i<fre_qw;i++){
-            cout<<Q[i].qword<<" "<<Q[i].score<<endl;
-         }*/
 
          for(i=0;i<doc_count;i++)
             D[i].dot_prod = getDotProductValue(i,fre_qw)/(len[i]*qlen); //Unit Vector
 
         //sort and then retrieve the top 5 docs :)
+        //for(i=0;i<fre_qw;i++){
+          //  cout<<Q[i].qword<<" "<<Q[i].score<<endl;
+         //}
 
         sort(D,D+doc_count,cmpfun);
 
         for(i=0;i<doc_count;i++)
-            cout<<D[i].doc_no<< " ";
+            cout<<D[i].doc_no<< ","<<D[i].dot_prod<<endl;;
         cout<<endl;
 
 
@@ -209,6 +233,7 @@ int main(int argc, char *argv[]){
             if(fno == -1)
                 break;
 
+
             if(fno < 0|| fno >= doc_count){
                 cout<<"Please Enter a valid file#: "<<"0 to "<<doc_count-1<<endl;
                 continue;
@@ -220,6 +245,8 @@ int main(int argc, char *argv[]){
             sprintf(cmmnd,"ls -1 ./docs | head -n %d | tail -n 1  > qtemp.out",fno+1);
 
             pid = fork();
+            system(cmmnd);
+
 
             if(pid == 0){ //Displaying the file, inner details are a bit messy :(
                 char tstr[1000];
@@ -227,6 +254,7 @@ int main(int argc, char *argv[]){
                 fp = fopen("qtemp.out","r");
 
                 fscanf(fp,"%s",tstr);
+                  cout<<"File name is: "<<tstr<<endl;
 
                 sprintf(cmmnd,"cp ./docs/%s doctemp.out",tstr);
                 system(cmmnd);
@@ -236,8 +264,12 @@ int main(int argc, char *argv[]){
                     strcat(tstr," -e ");
                     strcat(tstr,Q[i].qword);
                 }*/
+                sprintf(tstr,"grep -n ");
+                for(i=0;i<fre_qw;i++)
 
-                sprintf(cmmnd," cat doctemp.out");
+                    strcat(tstr," -e "), strcat(tstr,Q[i].qword);
+
+                sprintf(cmmnd," cat doctemp.out | %s",tstr);
                 system(cmmnd);
                 fclose(fp);
                 return 0;

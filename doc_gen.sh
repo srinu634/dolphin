@@ -3,9 +3,10 @@
 #	1st document in ls is sorted as 0.txt
 #	2nd document in ls is sorted as 1.txt .........
 # This is done so that the Indexing of term frequencies can be done in O(n) , where n is the document size*AVG(Word Length) . Of course, Sorting takes O(nlogn).
+#Also, all capital are converted to small case
 
 declare -i count=0 #Number of documents indexed
-declare -i remaining=8 
+declare -i remaining=8
 fname="temp"
 
 g++ doc_sort.cpp -o doc_sort.out  #Sorts a given file in dictionary style.
@@ -21,9 +22,10 @@ while [ 2 -eq 2 ]   # Always true with a break condition inside
 		count=count+1
 		remaining=remaining-1
 		echo "Sorted: $fname to $remaining.txt"
-		./doc_sort.out < ./docs/$fname > temp.txt 
-		sort -r temp.txt	> ./temp/"$remaining.txt"  #The Awesomely Written CPP Program :)
+		cat ./docs/$fname  > temp.txt
+		./doc_sort.out < temp.txt   > temp1.txt
+		sort -r temp1.txt	> ./temp/"$remaining.txt"  #The Awesomely Written CPP Program :)
 			
 	done
-rm temp.txt
+rm temp.txt temp1.txt
 echo "Finished Sorting every file"
