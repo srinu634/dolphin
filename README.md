@@ -27,6 +27,9 @@ How to run it?<br>
 -> run dolphin.cpp<br>
 
 
+PROBLEMS i faced:<br>
+1) Unicode problem , solution i found : wchar_t <br>
+2) xml text extraction when the file is really big ?? <br>
 
 
 

@@ -63,7 +63,7 @@ void print_tables(int doc_count){
         print_inv_list(inv_index[i]);
 }
 
-void  calculate_scores(int n){
+void  calculate_scores(int n){   //To calculate score of each document w.r.t each word
 
     double res;
     int i,j,fre;
@@ -71,14 +71,14 @@ void  calculate_scores(int n){
 
     for(i=0;i<n;i++){
         trav = inv_index[i];
-        cout<<"In Document: "<<i<<endl;
+        cout<<"Calculating score for: "<<i<<endl;
         while(trav != NULL){
             double res1,res2;
             fre = get_fre(trav->word); //From the global hash table
            // cout<<trav->word<<"Total fre: "<<fre<<" ";
 
-            res1 = n/1.000;
-            res1 = res1/fre;
+            res1 = n;
+            res1 =(double) res1/fre;
             res1 = log(res1)/log(2);
             //cout<<"Doc fre: "<<trav->fre;
             res2 = log(1+trav->fre)/log(2);
@@ -142,7 +142,7 @@ int main(int argc, char *argv[]){
     initialise_inv_index();
 
 
-    doc_count = 8;
+    doc_count = 8000;
     //int start_s=clock();
     build_index(doc_count);  //Global Hash Table + Inverted Index are built
     //int stop_s=clock();
@@ -152,7 +152,7 @@ int main(int argc, char *argv[]){
     calculate_scores(doc_count); //Update score for each term in every document
 
 
-    print_tables(doc_count);
+//    print_tables(doc_count);
 
     for(i=0;i<100;i++)
         Q[i].qword = (char *)( malloc(sizeof(char) *200) );
@@ -189,8 +189,8 @@ int main(int argc, char *argv[]){
         qlen = 0;
 
         for(i=0;i<fre_qw;i++){
-            Q[i].score = doc_count/1.0;
-            Q[i].score = Q[i].score / get_fre( Q[i].qword );
+            Q[i].score = doc_count;
+            Q[i].score = (double) Q[i].score / get_fre( Q[i].qword );
 
             Q[i].score = log( Q[i].score ) <= 0 ? 0 : log( Q[i].score );
             Q[i].score = Q[i].score/log(2);
@@ -217,7 +217,7 @@ int main(int argc, char *argv[]){
 
         sort(D,D+doc_count,cmpfun);
 
-        for(i=0;i<doc_count;i++)
+        for(i=0;i<10;i++)
             cout<<D[i].doc_no<< ","<<D[i].dot_prod<<endl;;
         cout<<endl;
 
@@ -233,7 +233,6 @@ int main(int argc, char *argv[]){
             if(fno == -1)
                 break;
 
-
             if(fno < 0|| fno >= doc_count){
                 cout<<"Please Enter a valid file#: "<<"0 to "<<doc_count-1<<endl;
                 continue;
@@ -242,36 +241,12 @@ int main(int argc, char *argv[]){
             int pid;
             char cmmnd[100];
 
-            sprintf(cmmnd,"ls -1 ./docs | head -n %d | tail -n 1  > qtemp.out",fno+1);
-
             pid = fork();
-            system(cmmnd);
-
 
             if(pid == 0){ //Displaying the file, inner details are a bit messy :(
-                char tstr[1000];
-                FILE *fp;
-                fp = fopen("qtemp.out","r");
-
-                fscanf(fp,"%s",tstr);
-                  cout<<"File name is: "<<tstr<<endl;
-
-                sprintf(cmmnd,"cp ./docs/%s doctemp.out",tstr);
+                sprintf(cmmnd,"cat ./data/%d.txt",fno);
+                cout<<endl;
                 system(cmmnd);
-                /*strcpy(tstr,"grep ");
-
-                for(i=0;i<fre_qw;i++){
-                    strcat(tstr," -e ");
-                    strcat(tstr,Q[i].qword);
-                }*/
-                sprintf(tstr,"grep -n ");
-                for(i=0;i<fre_qw;i++)
-
-                    strcat(tstr," -e "), strcat(tstr,Q[i].qword);
-
-                sprintf(cmmnd," cat doctemp.out | %s",tstr);
-                system(cmmnd);
-                fclose(fp);
                 return 0;
             }//child
         }//while

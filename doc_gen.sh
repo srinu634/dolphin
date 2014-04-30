@@ -6,26 +6,18 @@
 #Also, all capital are converted to small case
 
 declare -i count=0 #Number of documents indexed
-declare -i remaining=8
-fname="temp"
 
 g++ doc_sort.cpp -o doc_sort.out  #Sorts a given file in dictionary style.
 mkdir temp #Create a Temp Directory to store the sorted documents 
 echo "temp folder is created,Sorting each file is about to get started"
 
-while [ 2 -eq 2 ]   # Always true with a break condition inside
+while [ "$count" -lt 199328 ]   #199328
 	do 
-		if [ $remaining -eq 0 ];then
-			break;
-		fi
-		fname=$(ls ./docs | head -n $remaining | tail -n 1  )
-		count=count+1
-		remaining=remaining-1
-		echo "Sorted: $fname to $remaining.txt"
-		cat ./docs/$fname  > temp.txt
-		./doc_sort.out < temp.txt   > temp1.txt
-		sort -r temp1.txt	> ./temp/"$remaining.txt"  #The Awesomely Written CPP Program :)
-			
+		echo "Sorted: ./data/$count.txt to ./temp/$count.txt"
+		./doc_sort.out < ./data/$count.txt   > temp1.txt
+		sort -r temp1.txt > temp2.txt
+		cp temp2.txt  ./temp/$count.txt
+		count=count+1	
 	done
-rm temp.txt temp1.txt
+rm temp1.txt temp2.txt
 echo "Finished Sorting every file"

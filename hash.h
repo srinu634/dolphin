@@ -4,7 +4,7 @@
 using namespace std;
 
 typedef long long ll;
-#define MAX 373373
+#define MAX 373000
 #define INF 100000000
 #define true 1
 #define false 0

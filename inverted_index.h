@@ -1,7 +1,7 @@
 #include<algorithm>
 #include<cstring>
 #include<cmath>
-#define MAXDOCS 2000
+#define MAXDOCS 200000
 using namespace std;
 
 struct inv_node{
